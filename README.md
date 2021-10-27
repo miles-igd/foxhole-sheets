@@ -1,13 +1,13 @@
-### Usage
+## Usage
 
-## Input
+### Input
 **stockpile.png**
 
 ![stockpile image](https://i.imgur.com/C4MrXUP.png "Stockpile")
 
 `python -m sheets input -i stockpile.png`
 
-## Output
+### Output
 
 ```json
 {
