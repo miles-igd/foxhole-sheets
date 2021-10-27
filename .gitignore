@@ -3,6 +3,7 @@
 *.creds
 .vscode/
 unknown.png
+unknown.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

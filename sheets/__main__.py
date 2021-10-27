@@ -9,7 +9,7 @@ try:
 except ModuleNotFoundError as e:
     logging.info("discord.py not found -- to run the bot requires discord.py")
 
-from sheets.prepare import process
+from sheets.core import process
 
 parser = argparse.ArgumentParser(description='FoxholeSheets CLI')
 parser.add_argument('type', metavar='T', type=str,

@@ -7,7 +7,7 @@ import json
 
 from collections import defaultdict
 from discord.ext import commands
-from sheets.prepare import process
+from sheets.core import process
 
 pic_ext = ['.jpg','.png','.jpeg']
 
