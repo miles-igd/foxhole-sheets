@@ -3,7 +3,7 @@
 ### Input
 **stockpile.png**
 
-![stockpile image](https://i.imgur.com/C4MrXUP.png "Stockpile")
+![stockpile image](https://github.com/iggygd/foxhole_sheets/blob/master/stockpile.png "Stockpile")
 
 `python -m sheets input -i stockpile.png`
 
