@@ -15,13 +15,13 @@ parser = argparse.ArgumentParser(description='FoxholeSheets CLI')
 parser.add_argument('type', metavar='T', type=str,
                     help='bot/input [Start a bot or input an image]')
 parser.add_argument('-i', dest='input',
-                    help='input filepath')
+                    help='stockpile image input filepath')
 parser.add_argument('-o', dest='output',
-                    help='output filepath')
+                    help='json output filepath')
 parser.add_argument('-fo', dest='foutput',
                     help='image output filepath')
 parser.add_argument('-ident', dest='ident', action='store_true',
-                    help='identify?')
+                    help='unidentified items will be prompted to be identified and saved into the Icons folder')
 
 args = parser.parse_args()
 
