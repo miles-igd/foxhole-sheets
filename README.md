@@ -5,7 +5,7 @@
 
 ![stockpile image](https://github.com/iggygd/foxhole_sheets/blob/master/stockpile.png "Stockpile")
 
-`python -m sheets input -i stockpile.png`
+`python -m sheets input`
 
 ### Output
 
