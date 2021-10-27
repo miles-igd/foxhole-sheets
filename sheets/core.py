@@ -128,7 +128,7 @@ def load_nums(file_path = "nums.json"):
     else:
         return dict()
 
-def process(im, identify=False, min_err=.010):
+def process(im, identify=False, min_err=.012):
     identities = load_nums()
     icon_arrays = load_icons()
     names = list(icon_arrays.keys())
