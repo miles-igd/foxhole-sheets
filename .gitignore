@@ -4,6 +4,8 @@
 .vscode/
 unknown.png
 unknown.json
+unknown.jpg
+unknown.jpeg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

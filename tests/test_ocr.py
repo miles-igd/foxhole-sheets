@@ -31,3 +31,4 @@ class TestOCR(unittest.TestCase):
         self.assertIn("9", identities)
         self.assertIn("k", identities)
         self.assertIn("+", identities)
+        

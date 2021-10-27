@@ -9,7 +9,7 @@ from sheets.ident import ident_item, ident_num
 def find_items(im):
     assert type(im) == np.ndarray
     LOW_THRESH = 50
-    HIGH_THRESH = 80
+    HIGH_THRESH = 105
 
     im_Gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     mask = cv2.inRange(im_Gray, LOW_THRESH, HIGH_THRESH)
@@ -128,7 +128,7 @@ def load_nums(file_path = "nums.json"):
     else:
         return dict()
 
-def process(im, identify=False, min_err=.012):
+def process(im, identify=False, min_err=.03):
     identities = load_nums()
     icon_arrays = load_icons()
     names = list(icon_arrays.keys())
@@ -145,7 +145,11 @@ def process(im, identify=False, min_err=.012):
 
         icon_image = prepare_item(icon_image)
 
-        err, index = match_item(icon_image, arrs)#, structural_similarity, max)
+        try:
+            err, index = match_item(icon_image, arrs)#, structural_similarity, max)
+        except ValueError as e:
+            print(str(e))
+            continue
 
         if err >= min_err:
             print("Could not identify.", err)
