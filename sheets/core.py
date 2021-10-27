@@ -4,7 +4,6 @@ import numpy as np
 import os
 import json
 
-from glob import glob
 from sheets.ident import ident_item, ident_num
 
 def find_items(im):
@@ -44,7 +43,7 @@ def prepare_item(ident_icon):
 
 def match_item(icon_image, arrs, metric=lambda x, y: ((x-y)**2).mean(), order=min, **kwargs):
     if len(arrs) == 0:
-        return 0, 0
+        return None, None
 
     distances = [metric(icon_image, icon_array, **kwargs) for icon_array in arrs]
     min_err = order(distances)

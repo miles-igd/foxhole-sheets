@@ -31,20 +31,18 @@ class Main(commands.Cog):
                         im = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                         data, out = process(im)
 
-                        j_io = io.BytesIO()
                         json_str = json.dumps(data, indent=4, sort_keys=True)
                         json_bytes = json_str.encode("utf-8")
-                        j_io.write(json_bytes)
-                        j_io.seek(0)
-                        j_file = discord.File(j_io, filename="stockpile.json")
+                        json_io = io.BytesIO(json_bytes)
+                        json_file = discord.File(json_io, filename="stockpile.json")
 
                         success, buffer = cv2.imencode(".jpg", out)
-                        i_io = io.BytesIO(buffer)
-                        i_file = discord.File(i_io, filename="stockpile.jpg")
+                        image_io = io.BytesIO(buffer)
+                        image_file = discord.File(image_io, filename="stockpile.jpg")
                         
                         await ctx.send(
                             "Highlighted red was not able to be identified",
-                            files=[i_file, j_file])
+                            files=[image_file, json_file])
 
                         return
 
