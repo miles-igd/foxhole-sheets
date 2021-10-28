@@ -75,7 +75,7 @@ def ocr(im, identities):
 def prepare_nums(im):
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
-    ret, thresh = cv2.threshold(gray, 166, 255, cv2.THRESH_BINARY)
+    ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
 
     width = int(thresh.shape[1] * 3)
     height = int(thresh.shape[0] * 3)
@@ -143,7 +143,11 @@ def process(im, identify=False, min_err=.03):
         xr,yr,wr,hr = cv2.boundingRect(rect)
         rect_image = im[yr:yr+hr,xr:xr+wr]
 
-        icon_image = prepare_item(icon_image)
+        try:
+            icon_image = prepare_item(icon_image)
+        except cv2.error as e:
+            print(str(e))
+            continue
 
         try:
             err, index = match_item(icon_image, arrs)#, structural_similarity, max)

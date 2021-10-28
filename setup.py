@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='foxhole_sheets',
-      version='1.0',
+      version='1.1',
       description='Foxhole Stockpile Analysis',
+      install_requires=[
+      'opencv-python'
+      ],
       packages=['sheets']
      )
