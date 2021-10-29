@@ -62,6 +62,9 @@ class Main(commands.Cog):
         '''
         Main command to parse a stockpile image using this bot. 
         1st argument can be 'csv' which outputs a .csv file, otherwise a .json file is used
+
+        process() loads up the icons and numbers from disk every time, which is noted. 
+        It will be improved later by making a class.
         '''
         if ctx.message.attachments:
             for attachment in ctx.message.attachments:

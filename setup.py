@@ -8,13 +8,15 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE / "README.md").read_text()
 
-setup(name='foxhole_sheets',
-      version='1.11',
+setup(name='foxhole-sheets',
+      version='1.11.0',
       description='Foxhole Stockpile Parsing',
       long_description=README,
       long_description_content_type="text/markdown",
+      url="https://github.com/miles-igd/foxhole-sheets",
       author="miles-igd",
       license="MIT",
+      include_package_data=True,
       install_requires=[
       'opencv-python'
       ],

@@ -1,13 +1,32 @@
 ## Usage
 
-### Input
+### How-To
+
+Folder structure:
+```
+project_folder
+|   nums.json
+|   stockpile.png
+|___Icons
+    |   .44.png
+    |   .44 (Crate).png
+    |   ...
+```
+
+```
+\project_folder> pip install sheets
+\project_folder> python -m sheets input
+```
+
+json will be output into stockpile.json
+
+### Example
 **stockpile.png**
 
-![stockpile image](https://github.com/iggygd/foxhole_sheets/blob/master/stockpile.png "Stockpile")
+![stockpile image](https://github.com/miles-igd/foxhole_sheets/blob/master/stockpile.png "Stockpile")
 
 `python -m sheets input`
 
-### Output
 **stockpile.json**
 ```json
 {
