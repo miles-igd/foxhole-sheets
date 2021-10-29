@@ -21,6 +21,15 @@ class Main(commands.Cog):
         self.bot = bot
 
     async def to_csv(self, data):
+        '''
+        Inputs: 
+        data: dict
+
+        Of the type {str: str}
+
+        Outputs:
+        discord.File
+        '''
         items = sorted([(k, v) for k, v in data.items()], key=lambda x: x[0])
         csv_io = io.StringIO()
         writer = csv.writer(csv_io)
@@ -32,6 +41,15 @@ class Main(commands.Cog):
         return csv_file
 
     async def to_json(self, data):
+        '''
+        Inputs: 
+        data: dict
+
+        Of the type {str: str}
+
+        Outputs:
+        discord.File
+        '''
         json_str = json.dumps(data, indent=4, sort_keys=True)
         json_bytes = json_str.encode("utf-8")
         json_io = io.BytesIO(json_bytes)
@@ -41,6 +59,10 @@ class Main(commands.Cog):
 
     @commands.command()
     async def sp(self, ctx, *args):
+        '''
+        Main command to parse a stockpile image using this bot. 
+        1st argument can be 'csv' which outputs a .csv file, otherwise a .json file is used
+        '''
         if ctx.message.attachments:
             for attachment in ctx.message.attachments:
                 for ext in pic_ext:

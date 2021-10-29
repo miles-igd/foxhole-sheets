@@ -9,6 +9,9 @@ from sheets.ident import ident_item, ident_num
 DEBUG = False
 
 def find_items(im):
+    '''
+    Finds rectangles on a cv2 np.ndarray given the expected values of the grey boxes in a Foxhole stockpile.
+    '''
     assert type(im) == np.ndarray
     LOW_THRESH = 50
     HIGH_THRESH = 105
@@ -41,18 +44,32 @@ def find_items(im):
     return icons, rects
 
 def ident_items(icons, im):
+    '''
+    Prompts the user to identify an icon, given a stockpile image and a list of np.ndarray (rectangles).
+    It will save the icon into the folder Icons\\
+    '''
     for icon in icons:
         x,y,w,h = cv2.boundingRect(icon)
         ident_icon = prepare_item(im[y:y+h,x:x+w].copy())
         ident_item(ident_icon, output="Icons\\")
 
 def prepare_item(ident_icon):
+    '''
+    Returns a thresholded version of a cv2 np.ndarray ident_icon.
+    This mitigates noise and artifacts on the image.
+    '''
     ident_icon = cv2.cvtColor(ident_icon, cv2.COLOR_BGR2GRAY)
     _, ident_icon = cv2.threshold(ident_icon, 144, 255, cv2.THRESH_BINARY)
 
     return ident_icon
 
 def match_item(icon_image, arrs, metric=lambda x, y: ((x-y)**2).mean(), order=min, **kwargs):
+    '''
+    Brute-force matching of an icon with all the icons in arrs.
+    metric arg expects an image similarity metric, default is mean-squared error.
+    order arg expects min or max, depending on how the metric is calculated.
+    kwargs expects any kwarg used in metric.
+    '''
     if len(arrs) == 0:
         return None, None
 
@@ -61,12 +78,18 @@ def match_item(icon_image, arrs, metric=lambda x, y: ((x-y)**2).mean(), order=mi
     return min_err, distances.index(min_err)
 
 def load_icons(folder_path = "Icons\\"):
+    '''
+    loads the icons from Icons\\ into memory as cv2 np.ndarrays
+    '''
     files = os.listdir(folder_path) 
     icons = {os.path.basename(f): cv2.imread(folder_path + f, cv2.IMREAD_GRAYSCALE) for f in files}
     
     return icons
 
 def ocr(im, identities):
+    '''
+    Brute-force matching of numbers to its identity, which is determined beforehand.
+    '''
     rects, thresh, original = prepare_nums(im)
     digits = []
     nums = dict()
@@ -84,6 +107,10 @@ def ocr(im, identities):
     return "".join(digits)
 
 def prepare_nums(im):
+    '''
+    Takes an input of a cv2 np.ndarray and returns a list of rectangles
+    locating where the digits are on the image.
+    '''
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
     ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
@@ -104,6 +131,10 @@ def prepare_nums(im):
     return sorted(rects, key = lambda x: x[0]), thresh, original
 
 def ident_nums(rects, im, output="nums.json", save=True):
+    '''
+    Prompts the user to identify a number,
+    It will save the numbers into nums.json file.
+    '''
     num_identities = load_nums()
 
     for rect in rects:                                           
@@ -130,6 +161,9 @@ def ident_nums(rects, im, output="nums.json", save=True):
             json.dump(num_identities, f)
 
 def load_nums(file_path = "nums.json"):
+    '''
+    loads the numbers from nums.json into memory as cv2 np.ndarrays
+    '''
     if os.path.exists(file_path):
         with open(file_path, "r") as f:
             dictionary = json.load(f)
@@ -140,6 +174,20 @@ def load_nums(file_path = "nums.json"):
         return dict()
 
 def process(im, identify=False, min_err=.03):
+    '''
+    Inputs:
+        im: cv2 np.ndarray
+        identify: bool
+        min_err: float
+
+    If identify is true, users will be prompted to identify unidentified icons by the ident_icon() function.
+    If false, it will draw red rectangles on the image instead.
+
+    Outputs:
+        dict {str: str}
+        np.ndarray
+        bool
+    '''
     found_unidentified = False
     identities = load_nums()
     icon_arrays = load_icons()
