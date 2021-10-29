@@ -14,7 +14,7 @@ project_folder
 ```
 
 ```
-\project_folder> pip install sheets
+\project_folder> pip install foxhole-sheets
 \project_folder> python -m sheets input
 ```
 
