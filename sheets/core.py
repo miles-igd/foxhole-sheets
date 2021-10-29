@@ -32,7 +32,7 @@ def find_items(im):
         cv2.imshow("holes", holes)
         cv2.imshow("result", result)
         cv2.waitKey()
-        
+
     contours, hierarchy = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     icons = [contour-np.array([49,0]) for contour in contours]
@@ -140,6 +140,7 @@ def load_nums(file_path = "nums.json"):
         return dict()
 
 def process(im, identify=False, min_err=.03):
+    found_unidentified = False
     identities = load_nums()
     icon_arrays = load_icons()
     names = list(icon_arrays.keys())
@@ -167,6 +168,7 @@ def process(im, identify=False, min_err=.03):
             continue
 
         if err >= min_err:
+            found_unidentified = True
             print("Could not identify.", err)
             if identify:
                 ident_item(icon_image, output="Icons\\")
@@ -179,7 +181,7 @@ def process(im, identify=False, min_err=.03):
         val = ocr(rect_image, identities)
         data[name] = val 
 
-    return data, im
+    return data, im, found_unidentified
 
 if __name__ == "__main__":
     im = cv2.imread("unknown.png")

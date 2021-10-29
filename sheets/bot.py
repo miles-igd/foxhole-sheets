@@ -1,4 +1,4 @@
-import cv2
+import csv, cv2
 import discord
 import io
 import logging
@@ -20,8 +20,27 @@ class Main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def to_csv(self, data):
+        items = sorted([(k, v) for k, v in data.items()], key=lambda x: x[0])
+        csv_io = io.StringIO()
+        writer = csv.writer(csv_io)
+        writer.writerows(items)
+        csv_bytes = csv_io.getvalue().encode("utf-8")
+        csv_io = io.BytesIO(csv_bytes)
+        csv_file = discord.File(csv_io, filename="stockpile.csv")
+
+        return csv_file
+
+    async def to_json(self, data):
+        json_str = json.dumps(data, indent=4, sort_keys=True)
+        json_bytes = json_str.encode("utf-8")
+        json_io = io.BytesIO(json_bytes)
+        json_file = discord.File(json_io, filename="stockpile.json")
+
+        return json_file
+
     @commands.command()
-    async def sp(self, ctx):
+    async def sp(self, ctx, *args):
         if ctx.message.attachments:
             for attachment in ctx.message.attachments:
                 for ext in pic_ext:
@@ -29,20 +48,30 @@ class Main(commands.Cog):
                         obj = await attachment.read()
                         nparr = np.frombuffer(obj, np.uint8)
                         im = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                        data, out = process(im)
+                        data, out, found_unidentified = process(im)
 
-                        json_str = json.dumps(data, indent=4, sort_keys=True)
-                        json_bytes = json_str.encode("utf-8")
-                        json_io = io.BytesIO(json_bytes)
-                        json_file = discord.File(json_io, filename="stockpile.json")
+                        for k, v in data.items():
+                            data[k] = v.replace("k+", "000")
+
+                        if args:
+                            if args[0] == "csv":
+                                data_file = await self.to_csv(data)
+                            else:
+                                data_file = await self.to_json(data)
+                        else:
+                            data_file = await self.to_json(data)
 
                         success, buffer = cv2.imencode(".jpg", out)
                         image_io = io.BytesIO(buffer)
                         image_file = discord.File(image_io, filename="stockpile.jpg")
                         
-                        await ctx.send(
-                            "Highlighted red was not able to be identified",
-                            files=[image_file, json_file])
+                        if found_unidentified:
+                            await ctx.send(
+                                "Unidentified items found - Highlighted in red",
+                                files=[image_file, data_file])
+                        else:
+                            await ctx.send(
+                                files=[data_file])
 
                         return
 
