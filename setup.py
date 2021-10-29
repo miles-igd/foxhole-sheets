@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='foxhole_sheets',
-      version='1.1',
+      version='1.11',
       description='Foxhole Stockpile Analysis',
       install_requires=[
       'opencv-python'
