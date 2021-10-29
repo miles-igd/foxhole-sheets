@@ -6,6 +6,8 @@ import json
 
 from sheets.ident import ident_item, ident_num
 
+DEBUG = False
+
 def find_items(im):
     assert type(im) == np.ndarray
     LOW_THRESH = 50
@@ -17,11 +19,20 @@ def find_items(im):
     kernel = np.ones((4,4),np.uint8)
     opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     holes = opening.copy()
-    cv2.floodFill(holes, None, (0, 0), 255)
+    cv2.floodFill(holes, None, (32, 0), 255)
 
     opening[np.where(holes==0)] = 255
     result = cv2.bitwise_and(im, im, mask = opening)
 
+    if DEBUG:
+        cv2.imshow("im", im)
+        cv2.imshow("im_Gray", im_Gray)
+        cv2.imshow("mask", mask)
+        cv2.imshow("opening", opening)
+        cv2.imshow("holes", holes)
+        cv2.imshow("result", result)
+        cv2.waitKey()
+        
     contours, hierarchy = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     icons = [contour-np.array([49,0]) for contour in contours]
