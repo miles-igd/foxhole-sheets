@@ -173,7 +173,7 @@ def load_nums(file_path = "nums.json"):
     else:
         return dict()
 
-def process(im, identify=False, min_err=.03):
+def process(im, identities = load_nums(), icon_arrays = load_icons(), identify=False, min_err=.03):
     '''
     Inputs:
         im: cv2 np.ndarray
@@ -189,8 +189,6 @@ def process(im, identify=False, min_err=.03):
         bool
     '''
     found_unidentified = False
-    identities = load_nums()
-    icon_arrays = load_icons()
     names = list(icon_arrays.keys())
     arrs = list(icon_arrays.values())
     data = dict()

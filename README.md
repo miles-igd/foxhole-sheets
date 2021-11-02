@@ -15,7 +15,7 @@ project_folder
 
 ```
 \project_folder> pip install foxhole-sheets
-\project_folder> python -m sheets input
+\project_folder> python -m sheets
 ```
 
 json will be output into stockpile.json
