@@ -16,7 +16,7 @@ class Stockpile():
         try:
             size = cls.RESOLUTIONS[resolution]
         except KeyError:
-            raise NotImplementedError(f"{resolution} not available in Stockpile()")
+            raise NotImplementedError(f"{resolution} not available in class Stockpile")
 
         _,_,w,h = cv2.boundingRect(rectangle)
         return (w,h) == size
