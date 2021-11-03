@@ -1,7 +1,8 @@
 import cv2
+import json
 import unittest
 
-from sheets.core import process
+from sheets.stockpile import Stockpile
 
 class TestData(unittest.TestCase):
 
@@ -9,20 +10,30 @@ class TestData(unittest.TestCase):
         im_mid = cv2.imread(r"tests/sp_mid_gamma.png")
         im_max = cv2.imread(r"tests/sp_max_gamma.png")
 
-        data_mid = process(im_mid)[0]
-        data_max = process(im_max)[0]
+        sp_mid_gamma = Stockpile(im_mid)
+        sp_max_gamma = Stockpile(im_max)
 
-        self.assertGreater(len(data_mid), 0)
-        self.assertEqual(data_mid, data_max)
+        print(sp_mid_gamma)
+
+        self.assertGreater(len(sp_mid_gamma.data), 0)
+        self.assertEqual(sp_mid_gamma.data,sp_max_gamma.data)
 
     def test_data_different(self):
-        print("tests/sp1.png")
-
         im1 = cv2.imread(r"tests/sp1.png")
         im2 = cv2.imread(r"tests/sp2.png")
 
-        data1 = process(im1)[0]
-        data2 = process(im2)[0]
+        sp1 = Stockpile(im1)
+        sp2 = Stockpile(im2)
 
-        self.assertGreater(len(data1), 0)
-        self.assertNotEqual(data1, data2)
+        self.assertGreater(len(sp1.data), 0)
+        self.assertNotEqual(sp1.data, sp2.data)
+
+    def test_data(self):
+        im = cv2.imread(r"tests/stockpile.png")
+        stockpile = Stockpile(im)
+
+        with open("tests/stockpile.json", "r") as json_file:
+            data = json.load(json_file)
+
+        self.assertGreater(len(stockpile.data), 0)
+        self.assertEqual(stockpile.data, data)
