@@ -25,7 +25,7 @@ json will be output into stockpile.json
 
 ![stockpile image](https://github.com/miles-igd/foxhole_sheets/blob/master/stockpile.png "Stockpile")
 
-`python -m sheets input`
+`python -m sheets`
 
 **stockpile.json**
 ```json
