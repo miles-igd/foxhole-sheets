@@ -5,12 +5,13 @@
 Folder structure:
 ```
 project_folder
-|   nums.json
 |   stockpile.png
-|___Icons
-    |   .44.png
-    |   .44 (Crate).png
-    |   ...
+|___Data
+    |   nums.json
+    |___Icons
+            |   .44 (Crate).png
+            |   .44.png
+            |   ...
 ```
 
 ```
