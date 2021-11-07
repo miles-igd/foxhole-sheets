@@ -48,6 +48,9 @@ class Stockpile():
 
         if parse: self.parse()
 
+        for k, v in self.data.items():
+            self.data[k] = v.replace("k+", "000")
+
     def parse(self):
         for number, icon in zip(self.numbers, self.icons):
             x,y,w,h = cv2.boundingRect(number)
