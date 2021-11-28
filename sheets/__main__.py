@@ -14,6 +14,7 @@ parser.add_argument('-fo', dest='foutput',
                     help='image output filepath')
 parser.add_argument('-min', dest='min', type=float,
                     help='min_error of image similarity (mse). default 0.03')
+parser.add_argument('-ident', dest='ident', action='store_true')
 
 args = parser.parse_args()
 
@@ -23,6 +24,9 @@ im = cv2.imread(input_)
 stockpile = Stockpile(im)
 
 output = args.output or "stockpile.json"
+
+if ident:
+    print(stockpile.unidentified)
 
 if args.foutput:
     cv2.imwrite(args.foutput, out)
