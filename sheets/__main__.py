@@ -25,7 +25,7 @@ stockpile = Stockpile(im)
 
 output = args.output or "stockpile.json"
 
-if ident:
+if args.ident:
     print(stockpile.unidentified)
 
 if args.foutput:

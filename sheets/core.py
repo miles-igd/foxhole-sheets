@@ -1,8 +1,11 @@
 import cv2
 import io
+import json
 import numpy as np
 import os
-import json
+import random
+import logging
+
 
 from sheets.ident import ident_item, ident_num
 
@@ -20,7 +23,9 @@ def find_numbers(im, low_threshold=50, high_threshold=105):
     kernel = np.ones((4,4),np.uint8)
     opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     holes = opening.copy()
-    cv2.floodFill(holes, None, (33, 33), 255)
+    starting = find_reasonable_opening(holes)
+
+    cv2.floodFill(holes, None, starting, 255)
 
     opening[np.where(holes==0)] = 255
     result = cv2.bitwise_and(im, im, mask = opening)
@@ -29,6 +34,24 @@ def find_numbers(im, low_threshold=50, high_threshold=105):
     rects = [cv2.convexHull(contour) for contour in contours]
 
     return rects
+
+def find_reasonable_opening(holes, window=11, limit=9):
+    '''
+    introduces randomness into algorithm, consider reconsidering
+    if a test fails sometimes, check here
+    '''
+    w,h=holes.shape
+    for i in range(limit):
+        x=random.randint(0,w)
+        y=random.randint(0,h)
+        logging.info(f"Trying to flood fill at ({y},{x})")
+
+        if np.sum(holes[x:x+window,y:y+window]) == 0:
+            return (y,x)
+        else:
+            logging.info("Failed")
+
+    return (22,22)
 
 def find_icons(num_rects):
     return [rect-np.array([49,0]) for rect in num_rects]
