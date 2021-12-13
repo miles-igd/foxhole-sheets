@@ -77,8 +77,8 @@ def find_reasonable_opening(holes, window=11, limit=9):
     '''
     w,h=holes.shape
     for i in range(limit):
-        x=random.randint(0,w)
-        y=random.randint(0,h)
+        x=random.randint(1,w-1)
+        y=random.randint(1,h-1)
         logging.info(f"Trying to flood fill at ({y},{x})")
 
         if np.sum(holes[x:x+window,y:y+window]) == 0:
