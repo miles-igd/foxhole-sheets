@@ -2,13 +2,18 @@ import cv2
 import logging
 import os
 
-from sheets.core import find_numbers, find_icons, prepare_icon, load_numbers, load_icons, match_item, ocr
+from sheets.core import (
+    find_numbers, find_icons, prepare_icon, load_numbers, load_icons, match_item, 
+    ocr, guess_resolution
+    )
 
-
+DEBUG = False
 
 class Stockpile():
     RESOLUTIONS = {
-        "1920x1080": (42,32)
+        "1920x1080": (42,32),
+        "2560x1440": (56,43),
+        "2560x1440x2": (56,42)
     }
 
     @classmethod
@@ -22,17 +27,20 @@ class Stockpile():
         return (w,h) == size
 
     def __init__(self, image, 
-                 resolution="1920x1080", 
+                 resolution=None, 
                  min_err=0.03, 
-                 number_identities=load_numbers(r"Data/nums.json"),
+                 number_identities=load_numbers(r"Data/Numbers/"),
                  icon_identities=load_icons(r"Data/Icons/"),
                  numbers=None,
                  icons=None,
                  parse=True):
-        self.resolution = resolution
+        self.resolution = guess_resolution(image)
+        assert self.resolution in Stockpile.RESOLUTIONS
+
         self.min_err = min_err
 
         self.image = image
+
         self.data = dict()
 
         self.unidentified = []
@@ -40,8 +48,8 @@ class Stockpile():
         self.number_identities = number_identities
         self.icon_identities = icon_identities
 
-        self.numbers=[rect for rect in find_numbers(self.image) if Stockpile.bool_size(rect, self.resolution)]
-        self.icons=find_icons(self.numbers)
+        self.numbers=find_numbers(self.image)
+        self.icons=find_icons(self.numbers, resolution=self.resolution)
 
         self.names = list(icon_identities.keys())
         self.icon_arrays = list(icon_identities.values())
@@ -55,6 +63,7 @@ class Stockpile():
         for number, icon in zip(self.numbers, self.icons):
             x,y,w,h = cv2.boundingRect(number)
             number_image = self.image[y:y+h,x:x+w]
+
             x,y,w,h = cv2.boundingRect(icon)
             icon_image = self.image[y:y+h,x:x+w]
 

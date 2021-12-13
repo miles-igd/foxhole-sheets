@@ -6,10 +6,27 @@ import os
 import random
 import logging
 
-
+from collections import Counter
 from sheets.ident import ident_item, ident_num
 
 DEBUG = False
+
+RESOLUTIONS = {
+    "1920x1080": (42,32),
+    "2560x1440": (56,43),
+    "2560x1440x2": (56,42)
+}
+
+RESOLUTIONS_INV = {
+    (42, 32): "1920x1080",
+    (56, 43): "2560x1440",
+    (56, 42): "2560x1440"
+}
+
+ICON_TRANSLATION = {
+    "1920x1080": np.array([49,0]),
+    "2560x1440": np.array([65,0])
+}
 
 def find_numbers(im, low_threshold=50, high_threshold=105):
     '''
@@ -32,8 +49,26 @@ def find_numbers(im, low_threshold=50, high_threshold=105):
 
     contours, hierarchy = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     rects = [cv2.convexHull(contour) for contour in contours]
+    rects = reduce_to_resolutions(rects)
 
     return rects
+
+def reduce_to_resolutions(rects):
+    candidates = []
+
+    for rect in rects:
+        x,y,w,h = cv2.boundingRect(rect)
+        if (w,h) in RESOLUTIONS.values():
+            candidates.append(rect)
+
+    return candidates
+
+def guess_resolution(im):
+    rects = find_numbers(im)
+    sizes = [cv2.boundingRect(rect)[2:] for rect in rects]
+    size = Counter(sizes).most_common(1)[0][0]
+
+    return RESOLUTIONS_INV[size]
 
 def find_reasonable_opening(holes, window=11, limit=9):
     '''
@@ -53,8 +88,9 @@ def find_reasonable_opening(holes, window=11, limit=9):
 
     return (22,22)
 
-def find_icons(num_rects):
-    return [rect-np.array([49,0]) for rect in num_rects]
+def find_icons(num_rects, resolution="1920x1080"):
+    translation = ICON_TRANSLATION[resolution]
+    return [rect-translation for rect in num_rects]
 
 def ident_items(icons, im):
     '''
@@ -173,15 +209,16 @@ def ident_nums(rects, im, output="Data\\nums.json", save=True):
         with open("Data\\nums.json", "w") as f:
             json.dump(num_identities, f)
 
-def load_numbers(file_path = "Data\\nums.json"):
+def load_numbers(folder_path = "Data\\Numbers\\"):
     '''
-    loads the numbers from nums.json into memory as cv2 np.ndarrays
+    loads the numbers from numbers folder into memory as cv2 np.ndarrays
     '''
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            dictionary = json.load(f)
-        for k, v in dictionary.items():
-            dictionary[k] = np.array(v).astype(np.uint8)
-        return dictionary
-    else:
-        return dict()
+    files = os.listdir(folder_path) 
+    nums = dict()
+
+    for filepath in files:
+        name = os.path.basename(filepath)
+        name, ext = os.path.splitext(name)
+        nums[name] = cv2.imread(folder_path + filepath, cv2.IMREAD_GRAYSCALE)
+
+    return nums
