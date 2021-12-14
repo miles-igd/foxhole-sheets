@@ -35,7 +35,7 @@ class TestCore(unittest.TestCase):
 
         x,y = find_reasonable_opening(holes)
 
-        self.assertEqual(holes[x,y], 0)
+        self.assertEqual(holes[y,x], 0)
 
     def test_guess_resolution_1080(self):
         im = cv2.imread(r"tests/sp_noise.png")
