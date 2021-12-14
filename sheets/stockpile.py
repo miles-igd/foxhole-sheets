@@ -27,8 +27,8 @@ class Stockpile():
         return (w,h) == size
 
     @classmethod
-    def get_resolution(cls, image):
-        return guess_resolution(image)
+    def get_resolution(cls, image, rects):
+        return guess_resolution(image, rects)
 
     def __init__(self, image, 
                  resolution=None, 
