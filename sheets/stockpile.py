@@ -26,15 +26,22 @@ class Stockpile():
         _,_,w,h = cv2.boundingRect(rectangle)
         return (w,h) == size
 
+    @classmethod
+    def get_resolution(cls, image):
+        return guess_resolution(image)
+
     def __init__(self, image, 
                  resolution=None, 
                  min_err=0.03, 
-                 number_identities=load_numbers(r"Data/Numbers/"),
-                 icon_identities=load_icons(r"Data/Icons/"),
+                 number_identities=None,
+                 icon_identities=None,
                  numbers=None,
                  icons=None,
                  parse=True):
-        self.resolution = guess_resolution(image)
+        if resolution:
+            self.resolution = resolution
+        else:
+            self.resolution = guess_resolution(image)
         assert self.resolution in Stockpile.RESOLUTIONS
 
         self.min_err = min_err
@@ -45,14 +52,20 @@ class Stockpile():
 
         self.unidentified = []
 
-        self.number_identities = number_identities
-        self.icon_identities = icon_identities
+        if number_identities:
+            self.number_identities = number_identities
+        else:
+            self.number_identities = load_numbers(resolution=self.resolution)
+        if icon_identities:
+            self.icon_identities = icon_identities
+        else:
+            self.icon_identities = load_icons(resolution=self.resolution)
 
         self.numbers=find_numbers(self.image)
         self.icons=find_icons(self.numbers, resolution=self.resolution)
 
-        self.names = list(icon_identities.keys())
-        self.icon_arrays = list(icon_identities.values())
+        self.names = list(self.icon_identities.keys())
+        self.icon_arrays = list(self.icon_identities.values())
 
         if parse: self.parse()
 

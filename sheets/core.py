@@ -59,6 +59,13 @@ def reduce_to_resolutions(rects):
     for rect in rects:
         x,y,w,h = cv2.boundingRect(rect)
         if (w,h) in RESOLUTIONS.values():
+            if (w,h) == (56, 43):
+                p1 = [x+w-1,y]
+                p2 = [x+w-1,y+h-2]
+                p3 = [x,y+h-2]
+                p4 = [x,y]
+                
+                rect = np.array([[p1],[p2],[p3],[p4]]) 
             candidates.append(rect)
 
     return candidates
@@ -126,10 +133,11 @@ def match_item(icon_image, icon_identities, metric=lambda x, y: ((x-y)**2).mean(
     min_err = order(distances)
     return min_err, distances.index(min_err)
 
-def load_icons(folder_path = "Data\\Icons\\"):
+def load_icons(folder_path = "./Data/{res}/Icons/", resolution = "1920x1080"):
     '''
     loads the icons from folder_path or Icons\\ into memory as cv2 np.ndarrays
     '''
+    folder_path = folder_path.format(res=resolution)
     files = os.listdir(folder_path) 
     icons = {os.path.basename(f): cv2.imread(folder_path + f, cv2.IMREAD_GRAYSCALE) for f in files}
     
@@ -179,7 +187,7 @@ def prepare_nums(im):
 
     return sorted(rects, key = lambda x: x[0]), thresh, original
 
-def ident_nums(rects, im, output="Data\\nums.json", save=True):
+def ident_nums(rects, im, resolution="1920x1080", save=True):
     '''
     Prompts the user to identify a number,
     It will save the numbers into nums.json file.
@@ -209,11 +217,12 @@ def ident_nums(rects, im, output="Data\\nums.json", save=True):
         with open("Data\\nums.json", "w") as f:
             json.dump(num_identities, f)
 
-def load_numbers(folder_path = "Data\\Numbers\\"):
+def load_numbers(folder_path = "./Data/{res}/Numbers/", resolution = "1920x1080"):
     '''
     loads the numbers from numbers folder into memory as cv2 np.ndarrays
     '''
-    files = os.listdir(folder_path) 
+    folder_path = folder_path.format(res=resolution)
+    files = os.listdir(folder_path)  
     nums = dict()
 
     for filepath in files:
