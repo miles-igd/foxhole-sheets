@@ -39,12 +39,14 @@ class TestCore(unittest.TestCase):
 
     def test_guess_resolution_1080(self):
         im = cv2.imread(r"tests/sp_noise.png")
-        resolution = guess_resolution(im)
+        rects = find_numbers(im)
+        resolution = guess_resolution(im, rects)
 
         self.assertEqual(resolution, "1920x1080")
 
     def test_guess_resolution_1440(self):
         im = cv2.imread(r"tests/sp_1440.png")
-        resolution = guess_resolution(im)
+        rects = find_numbers(im)
+        resolution = guess_resolution(im, rects)
 
         self.assertEqual(resolution, "2560x1440")

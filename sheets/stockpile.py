@@ -38,19 +38,21 @@ class Stockpile():
                  numbers=None,
                  icons=None,
                  parse=True):
+        self.image = image
+        self.min_err = min_err
+        self.data = dict()
+        self.unidentified = []
+
+        if numbers:
+            self.numbers=numbers
+        else:
+            self.numbers=find_numbers(self.image)
+
         if resolution:
             self.resolution = resolution
         else:
-            self.resolution = guess_resolution(image)
+            self.resolution = guess_resolution(image, self.numbers)
         assert self.resolution in Stockpile.RESOLUTIONS
-
-        self.min_err = min_err
-
-        self.image = image
-
-        self.data = dict()
-
-        self.unidentified = []
 
         if number_identities:
             self.number_identities = number_identities
@@ -61,9 +63,7 @@ class Stockpile():
         else:
             self.icon_identities = load_icons(resolution=self.resolution)
 
-        self.numbers=find_numbers(self.image)
         self.icons=find_icons(self.numbers, resolution=self.resolution)
-
         self.names = list(self.icon_identities.keys())
         self.icon_arrays = list(self.icon_identities.values())
 

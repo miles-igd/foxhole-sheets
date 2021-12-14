@@ -75,8 +75,7 @@ def reduce_to_resolutions(rects):
 
     return candidates
 
-def guess_resolution(im):
-    rects = find_numbers(im)
+def guess_resolution(im, rects):
     sizes = [cv2.boundingRect(rect)[2:] for rect in rects]
     size = Counter(sizes).most_common(1)[0][0]
 
