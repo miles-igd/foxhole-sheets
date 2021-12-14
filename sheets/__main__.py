@@ -3,6 +3,7 @@ import cv2
 import json
 import logging
 
+from sheets.core import ident_items
 from sheets.stockpile import Stockpile
 
 parser = argparse.ArgumentParser(description='FoxholeSheets CLI')
@@ -26,7 +27,7 @@ stockpile = Stockpile(im)
 output = args.output or "stockpile.json"
 
 if args.ident:
-    print(stockpile.unidentified)
+    ident_items(im)
 
 if args.foutput:
     cv2.imwrite(args.foutput, out)

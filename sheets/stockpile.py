@@ -83,6 +83,11 @@ class Stockpile():
             icon_image = prepare_icon(icon_image)
             err, item_index = match_item(icon_image, self.icon_arrays)
 
+            if err is None:
+                logging.error(f"There are no icons to match with.")
+                self.unidentified.append(self.image[y:y+h,x:x+w].copy())
+                continue
+
             if err >= self.min_err:
                 logging.info(f"Could not identify {(x,y,w,h)}, with err:{err}")
                 self.unidentified.append(self.image[y:y+h,x:x+w].copy())
@@ -90,5 +95,5 @@ class Stockpile():
 
             name = os.path.basename(self.names[item_index])
             name, ext = os.path.splitext(name)
-            val = ocr(number_image, self.number_identities)
+            val = ocr(number_image, self.number_identities, resolution=self.resolution)
             self.data[name] = val 

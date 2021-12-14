@@ -104,15 +104,19 @@ def find_icons(num_rects, resolution="1920x1080"):
     translation = ICON_TRANSLATION[resolution]
     return [rect-translation for rect in num_rects]
 
-def ident_items(icons, im):
+def ident_items(im):
     '''
-    Prompts the user to identify an icon, given a stockpile image and a list of np.ndarray (rectangles).
-    It will save the icon into the folder Icons\\
+    Prompts the user to identify icons, given a stockpile image.
+    It will save the icon into the folder {resolution}/Icons/
     '''
+    resolution = guess_resolution(im)
+    rects = find_numbers(im)
+    icons = find_icons(rects, resolution=resolution)
+
     for icon in icons:
         x,y,w,h = cv2.boundingRect(icon)
-        ident_icon = prepare_item(im[y:y+h,x:x+w].copy())
-        ident_item(ident_icon, output="Data\\Icons\\")
+        ident_icon = prepare_icon(im[y:y+h,x:x+w].copy())
+        ident_item(ident_icon, output=f"Data/{resolution}/Icons/")
 
 def prepare_icon(ident_icon):
     '''
@@ -148,7 +152,12 @@ def load_icons(folder_path = "./Data/{res}/Icons/", resolution = "1920x1080"):
     
     return icons
 
-def ocr(im, identities):
+NUM_SIZES = {
+    "1920x1080": (32,32),
+    "2560x1440": (48,48)
+}
+
+def ocr(im, identities, resolution="1920x1080"):
     '''
     Brute-force matching of numbers to its identity, which is determined beforehand.
     '''
@@ -158,7 +167,7 @@ def ocr(im, identities):
 
     for x,y,w,h in rects:
         num = original[y:y+h,x:x+w].copy()
-        num = cv2.resize(num, (32, 32), interpolation = cv2.INTER_NEAREST)
+        num = cv2.resize(num, NUM_SIZES[resolution], interpolation = cv2.INTER_NEAREST)
         
         for i, identity in identities.items():
             nums[i] = ((identity - num)**2).mean()
@@ -197,7 +206,7 @@ def ident_nums(rects, im, resolution="1920x1080", save=True):
     Prompts the user to identify a number,
     It will save the numbers into nums.json file.
     '''
-    num_identities = load_nums()
+    num_identities = load_numbers(resolution=resolution)
 
     for rect in rects:                                           
         x,y,w,h = cv2.boundingRect(rect)
@@ -206,7 +215,7 @@ def ident_nums(rects, im, resolution="1920x1080", save=True):
         num_rects, _, num_im = prepare_nums(rect_im)
         for x,y,w,h in num_rects:
             num = num_im[y:y+h,x:x+w].copy()
-            num = cv2.resize(num, (32, 32), interpolation = cv2.INTER_NEAREST)
+            num = cv2.resize(num, NUM_SIZES[resolution], interpolation = cv2.INTER_NEAREST)
             i = ident_num(num)
 
             if i and i in num_identities:
@@ -217,10 +226,8 @@ def ident_nums(rects, im, resolution="1920x1080", save=True):
     if save:
         for k, v in num_identities.items():
             num_identities[k] = v[np.where(v != 0)] = 255
-            num_identities[k] = v.tolist()
-
-        with open("Data\\nums.json", "w") as f:
-            json.dump(num_identities, f)
+            
+            cv2.imwrite(f"Data/{resolution}/Numbers/{k}.png", v)
 
 def load_numbers(folder_path = "./Data/{res}/Numbers/", resolution = "1920x1080"):
     '''
