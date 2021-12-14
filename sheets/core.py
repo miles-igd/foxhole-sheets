@@ -108,8 +108,8 @@ def ident_items(im):
     Prompts the user to identify icons, given a stockpile image.
     It will save the icon into the folder {resolution}/Icons/
     '''
-    resolution = guess_resolution(im)
     rects = find_numbers(im)
+    resolution = guess_resolution(im, rects)
     icons = find_icons(rects, resolution=resolution)
 
     for icon in icons:
