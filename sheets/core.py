@@ -34,12 +34,7 @@ def find_numbers(im, low_threshold=50, high_threshold=105):
     '''
     assert type(im) == np.ndarray
 
-    im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    mask = cv2.inRange(im_gray, low_threshold, high_threshold)
-
-    kernel = np.ones((4,4),np.uint8)
-    opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
-    holes = opening.copy()
+    holes, opening = find_holes(im, low_threshold, high_threshold)
     starting = find_reasonable_opening(holes)
 
     cv2.floodFill(holes, None, starting, 255)
@@ -52,6 +47,16 @@ def find_numbers(im, low_threshold=50, high_threshold=105):
     rects = reduce_to_resolutions(rects)
 
     return rects
+
+def find_holes(im, low_threshold, high_threshold):
+    im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    mask = cv2.inRange(im_gray, low_threshold, high_threshold)
+
+    kernel = np.ones((4,4),np.uint8)
+    opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    holes = opening.copy()
+
+    return holes, opening
 
 def reduce_to_resolutions(rects):
     candidates = []
