@@ -9,7 +9,7 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(name='foxhole-sheets',
-      version='2.1.0',
+      version='3.0.0',
       description='Foxhole Stockpile Parsing',
       long_description=README,
       long_description_content_type="text/markdown",
