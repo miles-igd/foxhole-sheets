@@ -176,11 +176,19 @@ def ocr(im, identities, resolution="1920x1080"):
     
     return "".join(digits)
 
+def do_gamma_correction(im, gamma=1.2):
+    inv_gamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** inv_gamma) * 255
+        for i in np.arange(0, 256)]).astype("uint8")
+
+    return cv2.LUT(im, table)
+
 def prepare_nums(im):
     '''
     Takes an input of a cv2 np.ndarray and returns a list of rectangles
     locating where the digits are on the image.
     '''
+    im = do_gamma_correction(im)
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
     ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
