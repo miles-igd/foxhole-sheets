@@ -47,3 +47,13 @@ class TestData(unittest.TestCase):
 
         self.assertGreater(len(stockpile.data), 0)
         self.assertEqual(stockpile.data, data)
+
+    def test_data_low_gamma_OCR(self):
+        im = cv2.imread(r"tests/sp_low_plus_noise.png")
+        stockpile = Stockpile(im)
+
+        with open("tests/sp_low_plus_noise.json", "r") as json_file:
+            data = json.load(json_file)
+
+        self.assertGreater(len(stockpile.data), 0)
+        self.assertEqual(stockpile.data, data)
