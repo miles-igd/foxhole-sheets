@@ -7,8 +7,13 @@ Folder structure:
 project_folder
 |   stockpile.png
 |___Data
-    |   nums.json
-    |___Icons
+    |___1920x1080
+        |   Numbers
+        |   |   +.png
+        |   |   0.png
+        |   |   1.png
+        |   |___...
+        |___Icons
             |   .44 (Crate).png
             |   .44.png
             |   ...
